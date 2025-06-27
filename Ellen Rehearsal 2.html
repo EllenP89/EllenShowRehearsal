@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Glitter Singing & Enthusiasm</title>
+
+  <!-- App-Like Installation Support -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon.png" />
+  <meta name="theme-color" content="#fce4ec"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-title" content="Glitter Singing"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #fce4ec;
+      color: #4a4a4a;
+      padding: 1.5rem;
+      line-height: 1.6;
+    }
+    h2 {
+      color: #ad1457;
+    }
+    h3 {
+      color: #7b1fa2;
+      border-bottom: 1px solid #ec407a;
+      margin-top: 2rem;
+    }
+    .song-title {
+      font-weight: bold;
+      margin-top: 1rem;
+      color: #4a148c;
+    }
+    .task {
+      margin-left: 1rem;
+    }
+    .celebrate {
+      display: none;
+      color: #388e3c;
+      margin-left: 0.4rem;
+      font-weight: bold;
+    }
+    progress {
+      width: 100%;
+      height: 16px;
+      accent-color: #ec407a;
+      margin-top: 0.5rem;
+    }
+    a.warmup {
+      display: inline-block;
+      margin: 0.5rem 0 0.5rem 1rem;
+      color: #c2185b;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h2>🌸 Hi Ellen! Here's your plan for <span id="dayName"></span></h2>
+  <div id="planner"></div>
+  <h3>📊 Your Song Progress</h3>
+  <div id="progress"></div>
+
+  <script>
+    const planner = {
+      0: {}, // Sunday
+      1: {
+        "🎤 Singing": {
+          "That Man": ["Rhythmic clarity", "Consonant snaps"],
+          "True Colors": ["Tone shaping", "Emotional phrasing"],
+          "Zangles with Maggie": ["Technique drills", "Vocal workouts"]
+        },
+        "🏋️ Workout": {
+          "Breath Drill": ["Low belly expansion", "Relaxed exhale flow"]
+        }
+      },
+      2: {
+        "💃 Dancing": {
+          "Blame It on the Boogie": ["Syncopated footwork"],
+          "Footloose": ["Precision pivots", "Final chorus spacing"]
+        },
+        "🔁 Combo": {
+          "Way to Your Heart": ["Chorus tuning", "Blend with alto line"]
+        }
+      },
+      3: {
+        "🎤 Singing": {
+          "Fame / What a Feeling": ["Core support", "Mid-range clarity"],
+          "Don’t Stop Believin’": ["Vowel shaping", "Dynamic arch"]
+        }
+      },
+      4: {
+        "🎤 Singing": {
+          "The Longest Time": ["Breath support", "Tuning entrances"]
+        },
+        "🔁 Combo": {
+          "80s Medley": ["Smooth transitions"],
+          "I Want You Back": ["Sync entrance with soprano", "Breath pacing"]
+        }
+      },
+      5: {
+        "🎤 Singing": {
+          "Nine to 5": ["Solo phrasing", "Storytelling accent"],
+          "Vonken en Vuur": ["Diction pass", "Chorus energy"],
+          "Zangles with Maggie": ["Technique drills", "Vocal workouts"]
+        },
+        "🔁 Combo": {
+          "It’s My Life": ["Stamina support", "Final key change"]
+        }
+      },
+      6: {
+        "🎤 Singing": {
+          "True Colors": ["Gentle vibrato review"],
+          "Way to Your Heart": ["Breath memory test"],
+          "Zangles with Maggie": ["Technique drills", "Vocal workouts"]
+        },
+        "🏋️ Workout": {
+          "Recovery Breath": ["Stretch + hum", "Posture check"]
+        }
+      }
+    };
+
+    const songList = [
+      "That Man", "Way to Your Heart", "Fame / What a Feeling", "The Longest Time",
+      "Blame It on the Boogie", "Turn the Beat Around / Smooth Criminal", "Footloose",
+      "80s Medley", "True Colors", "I Want You Back", "Vonken en Vuur",
+      "Thriller / Man in the Mirror", "Nine to 5", "Don’t Stop Believin’", "It’s My Life",
+      "Zangles with Maggie"
+    ];
+
+    const progressCount = {};
+    songList.forEach(song => progressCount[song] = 0);
+
+    const today = new Date();
+    const weekday = today.getDay();
+    const weekNum = Math.floor((today - new Date(today.getFullYear(), 0, 1)) / (7 * 24 * 60 * 60 * 1000)) % 4;
+    const dayMap = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    document.getElementById("dayName").textContent = `${dayMap[weekday]} (Week ${weekNum + 1})`;
+
+    const plan = planner[weekday] || {};
+    const container = document.getElementById("planner");
+
+    if (Object.keys(plan).length === 0) {
+      container.innerHTML = "<p>No tasks today—float like glitter ✨</p>";
+    } else {
+      Object.entries(plan).forEach(([category, songs]) => {
+        const h3 = document.createElement("h3");
+        h3.textContent = category;
+        container.appendChild(h3);
+
+        if (category.includes("Singing")) {
+          const warmup = document.createElement("a");
+          warmup.href = "https://www.youtube.com/watch?v=0cY5vLnsGfM";
+          warmup.target = "_blank";
+          warmup.textContent = "🎧 Vocal Warm-up — 5 mins of breath & resonance prep";
+          warmup.className = "warmup";
+          container.appendChild(warmup);
+        }
+
+        Object.entries(songs).forEach(([song, subtasks]) => {
+          const songTitle = document.createElement("div");
+          songTitle.className = "song-title";
+          songTitle.textContent = song;
+          container.appendChild(songTitle);
+
+          subtasks.forEach((task, index) => {
+            const wrapper = document.createElement("div");
+            wrapper.className = "task";
+            const id = `${song.replace(/\s+/g, '')}${index}`;
+            wrapper.innerHTML = `
+              <input type="checkbox" id="${id}">
+              <label for="${id}">${task}</label>
+              <span class="celebrate">🎉</span>
+            `;
+            wrapper.querySelector("input").addEventListener("change", function () {
+              const msg = wrapper.querySelector(".celebrate");
+              msg.style.display = this.checked ? "inline" : "none";
+              if (this.checked && progressCount[song] !== undefined) {
+                progressCount[song]++;
+                updateProgress();
+              } else if (!this.checked && progressCount[song] > 0) {
+                progressCount[song]--;
+                updateProgress();
+              }
+            });
+            container.appendChild(wrapper);
+          });
+        });
+      });
+    }
+
+    function updateProgress() {
+      const progress = document.getElementById("progress");
+      progress.innerHTML = "";
+      songList.forEach(song => {
+        const count = progressCount[song];
+        if (count > 0) {
+          const max = 4;
+          const percent = Math.min((count / max) * 100, 100);
+          progress.innerHTML += `
+            <label>${song} (${count}/${max})</label>
+            <progress value="${percent}" max="100"></progress>
+          `;
+        }
+      });
+    }
+  </script>
+</body>
+</html>
