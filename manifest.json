@@ -1,7 +1,7 @@
 {
   "name": "Glitter Singing & Enthusiasm",
   "short_name": "Glitter Singing",
-  "start_url": "ellen-planner.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#fce4ec",
   "theme_color": "#fce4ec",
