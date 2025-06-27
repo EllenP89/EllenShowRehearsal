@@ -151,13 +151,45 @@
         container.appendChild(h3);
 
         if (category.includes("Singing")) {
-          const warmup = document.createElement("a");
-          warmup.href = "https://www.youtube.com/watch?v=0cY5vLnsGfM";
-          warmup.target = "_blank";
-          warmup.textContent = "🎧 Vocal Warm-up — 5 mins of breath & resonance prep";
-          warmup.className = "warmup";
-          container.appendChild(warmup);
-        }
+  const wrapper = document.createElement("div");
+  wrapper.className = "task";
+
+  const warmups = [
+    {
+      label: "🫁 Vocal Warm-up: Breath & Grounding",
+      url: "https://www.youtube.com/watch?v=fXkU7ptJf-A"
+    },
+    {
+      label: "💫 Vocal Warm-up: Resonance & Vowels",
+      url: "https://www.youtube.com/watch?v=0cY5vLnsGfM"
+    },
+    {
+      label: "⚡ Vocal Warm-up: Agility & Riffs",
+      url: "https://www.youtube.com/watch?v=tTZWz_O0k6w"
+    },
+    {
+      label: "🛠️ Vocal Warm-up: Maggie's Core Mix",
+      url: "https://www.youtube.com/watch?v=ahEDjZq2Kjg"
+    }
+  ];
+
+  const pick = warmups[Math.floor(Math.random() * warmups.length)];
+
+  const id = `warmup-${weekday}`;
+  wrapper.innerHTML = `
+    <input type="checkbox" id="${id}">
+    <label for="${id}">${pick.label}</label>
+    <a href="${pick.url}" target="_blank" class="warmup">🎵 Play</a>
+    <span class="celebrate">🎉</span>
+  `;
+
+  wrapper.querySelector("input").addEventListener("change", function () {
+    const msg = wrapper.querySelector(".celebrate");
+    msg.style.display = this.checked ? "inline" : "none";
+  });
+
+  container.appendChild(wrapper);
+}
 
         Object.entries(songs).forEach(([song, subtasks]) => {
           const songTitle = document.createElement("div");
