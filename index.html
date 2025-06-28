@@ -226,4 +226,46 @@
                 <label for="${id}">${task}</label>
                 <span class="celebrate">🎉</span>
               `;
-              wrapper.querySelector("input").addEventListener
+             wrapper.querySelector("input").addEventListener("change", function () {
+                const msg = wrapper.querySelector(".celebrate");
+                msg.style.display = this.checked ? "inline" : "none";
+              });
+              container.appendChild(wrapper);
+            });
+          } else {
+            subtasks.forEach((task, index) => {
+              const wrapper = document.createElement("div");
+              wrapper.className = "task";
+              const id = `task-${song}-${index}`;
+              wrapper.innerHTML = `
+                <input type="checkbox" id="${id}">
+                <label for="${id}">${task}</label>
+                <span class="celebrate">🎉</span>
+              `;
+              wrapper.querySelector("input").addEventListener("change", function () {
+                const msg = wrapper.querySelector(".celebrate");
+                msg.style.display = this.checked ? "inline" : "none";
+              });
+              container.appendChild(wrapper);
+            });
+          }
+        });
+      });
+    }
+
+    const progressContainer = document.getElementById("progress");
+    songList.forEach(song => {
+      const progressWrapper = document.createElement("div");
+      progressWrapper.className = "song-title";
+      progressWrapper.textContent = song;
+
+      const progressBar = document.createElement("progress");
+      progressBar.max = 100;
+      progressBar.value = progressCount[song];
+
+      progressWrapper.appendChild(progressBar);
+      progressContainer.appendChild(progressWrapper);
+    });
+  </script>
+</body>
+</html> 
