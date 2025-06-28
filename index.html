@@ -24,10 +24,17 @@
       color: #ad1457;
     }
     h3 {
-      color: #7b1fa2;
       border-bottom: 1px solid #ec407a;
       margin-top: 2rem;
+      padding-bottom: 0.3rem;
     }
+    h3.category-singing { color: #6a1b9a; background-color: #f3e5f5; padding: 0.3rem; }
+    h3.category-dancing { color: #ad1457; background-color: #fce4ec; padding: 0.3rem; }
+    h3.category-combo { color: #00695c; background-color: #e0f2f1; padding: 0.3rem; }
+    h3.category-review { color: #0277bd; background-color: #e1f5fe; padding: 0.3rem; }
+    h3.category-workout { color: #ef6c00; background-color: #fff3e0; padding: 0.3rem; }
+    h3.category-metime { color: #4e342e; background-color: #efebe9; padding: 0.3rem; }
+
     .song-title {
       font-weight: bold;
       margin-top: 1rem;
@@ -42,230 +49,122 @@
       margin-left: 0.4rem;
       font-weight: bold;
     }
-    progress {
-      width: 100%;
-      height: 16px;
-      accent-color: #ec407a;
-      margin-top: 0.5rem;
-    }
-    a.warmup {
-      display: inline-block;
-      margin: 0.5rem 0 0.5rem 1rem;
-      color: #c2185b;
-      text-decoration: underline;
-    }
   </style>
 </head>
 <body>
   <h2>🌸 Hi Ellen! Here's your plan for <span id="dayName"></span></h2>
   <div id="planner"></div>
-  <h3>📊 Your Song Progress</h3>
-  <div id="progress"></div>
 
   <script>
-    const planner = {
-      0: {},
-      1: {
-        "🎤 Singing": {
-          "That Man": [],
-          "True Colors": [],
-          "Zangles with Maggie": ["Technique drills", "Vocal workouts"]
-        },
-        "🏋️ Workout": {
-          "Breath Drill": [],
-          "Cardio – Brisk Walk 20 min": []
-        }
-      },
-      2: {
-        "💃 Dancing": {
-          "Blame It on the Boogie": [],
-          "Footloose": []
-        },
-        "🔁 Combo": {
-          "Way to Your Heart": []
-        },
-        "🏋️ Workout": {
-          "Cardio – Jump Rope 15 min": []
-        }
-      },
-      3: {}, // Wednesday = Rest
-      4: {
-        "🎤 Singing": {
-          "The Longest Time": []
-        },
-        "🔁 Combo": {
-          "80s Medley": [],
-          "I Want You Back": []
-        },
-        "🏋️ Workout": {
-          "Cardio – Steady Jog 20 min": []
-        }
-      },
-      5: {
-        "🎤 Singing": {
-          "Nine to 5": [],
-          "Vonken en Vuur": [],
-          "Zangles with Maggie": ["Technique drills", "Vocal workouts"]
-        },
-        "🔁 Combo": {
-          "It’s My Life": []
-        },
-        "🏋️ Workout": {
-          "Cardio – Dance HIIT 15 min": []
-        }
-      },
-      6: {
-        "🎤 Singing": {
-          "True Colors": [],
-          "Way to Your Heart": [],
-          "Zangles with Maggie": ["Technique drills", "Vocal workouts"]
-        },
-        "🏋️ Workout": {
-          "Recovery Breath": [],
-          "Stretch + Hum": [],
-          "Cardio – Zumba 25 min": []
-        }
-      }
-    };
-
-    const songList = [
+    const songPool = [
       "That Man", "Way to Your Heart", "Fame / What a Feeling", "The Longest Time",
       "Blame It on the Boogie", "Turn the Beat Around / Smooth Criminal", "Footloose",
       "80s Medley", "True Colors", "I Want You Back", "Vonken en Vuur",
-      "Thriller / Man in the Mirror", "Nine to 5", "Don’t Stop Believin’", "It’s My Life",
-      "Zangles with Maggie"
+      "Thriller / Man in the Mirror", "Nine to 5", "Don’t Stop Believin’", "It’s My Life"
     ];
 
-    const progressCount = {};
-    songList.forEach(song => progressCount[song] = 0);
+    const workoutTips = {
+      "Breathing Drills": "🫁 Inhale for 4 counts, exhale on a hiss for 8–12 counts. Repeat 3–5 times.",
+      "Core Workout": "💪 3 rounds: 30 sec plank, 20 crunches, 10 leg raises.",
+      "Cardio + Strength": "🏃‍♀️ 10 min jog + 3 rounds: squats, push-ups, lunges.",
+      "Stretch + Review": "🧘‍♀️ Gentle stretches + review 2 songs with light humming.",
+      "Me-Time": "🛁 Take a bath, journal, or meditate. You’ve earned it!"
+    };
+
+    const motivation = [
+      "🎉 You nailed it!",
+      "🌟 Keep shining!",
+      "💖 Beautiful work!",
+      "💪 Strong and steady!",
+      "🎶 That’s the spirit!"
+    ];
 
     const today = new Date();
     const weekday = today.getDay();
-    const weekNum = Math.floor((today - new Date(today.getFullYear(), 0, 1)) / (7 * 24 * 60 * 60 * 1000)) % 4;
+    const weekNum = Math.floor((today - new Date(today.getFullYear(), 0, 1)) / (7 * 24 * 60 * 60 * 1000));
     const dayMap = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     document.getElementById("dayName").textContent = `${dayMap[weekday]} (Week ${weekNum + 1})`;
 
-    const plan = planner[weekday] || {};
-    const container = document.getElementById("planner");
+    function pickSongs(count, offset = 0) {
+      const rotated = [...songPool.slice(offset), ...songPool.slice(0, offset)];
+      return rotated.slice(0, count);
+    }
 
-    if (Object.keys(plan).length === 0) {
+    const planner = {
+      0: {
+        "🔍 Review": pickSongs(2, weekNum * 2),
+        "🏋️ Workout": ["Stretch + Review"]
+      },
+      1: {
+        "🎤 Singing": pickSongs(3, weekNum * 3),
+        "🏋️ Workout": ["Breathing Drills"]
+      },
+      2: {
+        "🩰 Dancing": pickSongs(2, weekNum * 4),
+        "🏋️ Workout": ["Core Workout"]
+      },
+      3: {
+        "🧘 Me-Time": ["Me-Time"]
+      },
+      4: {
+        "🎤 Solo Practice": pickSongs(2, weekNum * 5),
+        "🏋️ Workout": ["Breathing Drills"]
+      },
+      5: {
+        "🏋️ Workout": ["Cardio + Strength"]
+      },
+      6: {
+        "🔁 Combo Run-Through": pickSongs(6, weekNum * 6),
+        "🏋️ Workout": ["Stretch + Review"]
+      }
+    };
+
+    const categoryClassMap = {
+      "🎤 Singing": "category-singing",
+      "🩰 Dancing": "category-dancing",
+      "🔁 Combo Run-Through": "category-combo",
+      "🔍 Review": "category-review",
+      "🏋️ Workout": "category-workout",
+      "🧘 Me-Time": "category-metime",
+      "🎤 Solo Practice": "category-singing"
+    };
+
+    const container = document.getElementById("planner");
+    const plan = planner[weekday];
+
+    if (!plan) {
       container.innerHTML = "<p>No tasks today—float like glitter ✨</p>";
     } else {
-      Object.entries(plan).forEach(([category, songs]) => {
+      Object.entries(plan).forEach(([category, tasks]) => {
         const h3 = document.createElement("h3");
         h3.textContent = category;
+        h3.className = categoryClassMap[category] || "";
         container.appendChild(h3);
 
-        if (category.includes("Singing")) {
+        tasks.forEach((task, index) => {
           const wrapper = document.createElement("div");
           wrapper.className = "task";
-
-          const warmups = [
-            {
-              label: "🫁 Vocal Warm-up: Breath & Grounding",
-              url: "https://www.youtube.com/watch?v=fXkU7ptJf-A"
-            },
-            {
-              label: "💫 Vocal Warm-up: Resonance & Vowels",
-              url: "https://www.youtube.com/watch?v=0cY5vLnsGfM"
-            },
-            {
-              label: "⚡ Vocal Warm-up: Agility & Riffs",
-              url: "https://www.youtube.com/watch?v=tTZWz_O0k6w"
-            },
-            {
-              label: "🛠️ Vocal Warm-up: Maggie's Core Mix",
-              url: "https://www.youtube.com/watch?v=ahEDjZq2Kjg"
-            }
-          ];
-
-          const pick = warmups[Math.floor(Math.random() * warmups.length)];
-          const id = `warmup-${weekday}`;
+          const id = `${category.replace(/\s+/g, '')}-${index}`;
+          const tip = workoutTips[task] ? ` title="${workoutTips[task]}"` : "";
           wrapper.innerHTML = `
             <input type="checkbox" id="${id}">
-            <label for="${id}">${pick.label}</label>
-            <a href="${pick.url}" target="_blank" class="warmup">🎵 Play</a>
-            <span class="celebrate">🎉</span>
+            <label for="${id}"${tip}>${task}</label>
+            <span class="celebrate"></span>
           `;
-          wrapper.querySelector("input").addEventListener("change", function () {
-            const msg = wrapper.querySelector(".celebrate");
-            msg.style.display = this.checked ? "inline" : "none";
+          const input = wrapper.querySelector("input");
+          const msg = wrapper.querySelector(".celebrate");
+          input.addEventListener("change", function () {
+            if (this.checked) {
+              msg.textContent = motivation[Math.floor(Math.random() * motivation.length)];
+              msg.style.display = "inline";
+            } else {
+              msg.style.display = "none";
+            }
           });
           container.appendChild(wrapper);
-        }
-
-        Object.entries(songs).forEach(([song, subtasks]) => {
-          const songTitle = document.createElement("div");
-          songTitle.className = "song-title";
-
-          const workoutTips = {
-            "Breath Drill": "🫁 Inhale for 4 counts, exhale on a hiss for 8–12 counts. Repeat 3–5 times.",
-            "Recovery Breath": "😌 Gentle inhale through nose, exhale on 'shhh'. Add shoulder rolls and neck stretches.",
-            "Stretch + Hum": "🤸‍♀️ Light full-body stretches followed by gentle humming.",
-            "Cardio – Brisk Walk 20 min": "🚶‍♀️ Walk at a steady pace, arms swinging, for 20 minutes.",
-            "Cardio – Jump Rope 15 min": "🔁 3 rounds of 1 min jump rope + 1 min rest.",
-            "Cardio – Steady Jog 20 min": "🏃‍♀️ Jog at a conversational pace for 20 minutes.",
-            "Cardio – Dance HIIT 15 min": "💃 Alternate 30 sec dance bursts with 30 sec rest.",
-            "Cardio – Zumba 25 min": "🎶 Follow a Zumba video or freestyle to upbeat music."
-          };
-
-          if (category.includes("Workout") && workoutTips[song]) {
-            songTitle.title = workoutTips[song];
-          }
-
-          songTitle.textContent = song;
-          container.appendChild(songTitle);
-
-          if (song === "Zangles with Maggie") {
-            subtasks.forEach((task, index) => {
-              const wrapper = document.createElement("div");
-              wrapper.className = "task";
-                const id = `task-${song}-${index}`;
-              wrapper.innerHTML = `
-                <input type="checkbox" id="${id}">
-                <label for="${id}">${task}</label>
-                <span class="celebrate">🎉</span>
-              `;
-             wrapper.querySelector("input").addEventListener("change", function () {
-                const msg = wrapper.querySelector(".celebrate");
-                msg.style.display = this.checked ? "inline" : "none";
-              });
-              container.appendChild(wrapper);
-            });
-          } else {
-            subtasks.forEach((task, index) => {
-              const wrapper = document.createElement("div");
-              wrapper.className = "task";
-              const id = `task-${song}-${index}`;
-              wrapper.innerHTML = `
-                <input type="checkbox" id="${id}">
-                <label for="${id}">${task}</label>
-                <span class="celebrate">🎉</span>
-              `;
-              wrapper.querySelector("input").addEventListener("change", function () {
-                const msg = wrapper.querySelector(".celebrate");
-                msg.style.display = this.checked ? "inline" : "none";
-              });
-              container.appendChild(wrapper);
-            });
-          }
         });
       });
     }
-
-    const progressContainer = document.getElementById("progress");
-    songList.forEach(song => {
-      const progressWrapper = document.createElement("div");
-      progressWrapper.className = "song-title";
-      progressWrapper.textContent = song;
-
-      const progressBar = document.createElement("progress");
-      progressBar.max = 100;
-      progressBar.value = progressCount[song];
-
-      progressWrapper.appendChild(progressBar);
-      progressContainer.appendChild(progressWrapper);
-    });
   </script>
 </body>
-</html> 
+</html>
