@@ -145,12 +145,12 @@
           const wrapper = document.createElement("div");
           wrapper.className = "task";
           const id = `${category.replace(/\s+/g, '')}-${index}`;
-          const tip = workoutTips[task] ? ` title="${workoutTips[task]}"` : "";
-          wrapper.innerHTML = `
-            <input type="checkbox" id="${id}">
-            <label for="${id}"${tip}>${task}</label>
-            <span class="celebrate"></span>
-          `;
+        const tipText = workoutTips[task] ? ` — ${workoutTips[task]}` : "";
+wrapper.innerHTML = `
+  <input type="checkbox" id="${id}">
+  <label for="${id}">${task}${tipText}</label>
+  <span class="celebrate"></span>
+`;
           const input = wrapper.querySelector("input");
           const msg = wrapper.querySelector(".celebrate");
           input.addEventListener("change", function () {
