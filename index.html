@@ -220,4 +220,10 @@
             subtasks.forEach((task, index) => {
               const wrapper = document.createElement("div");
               wrapper.className = "task";
-              const
+                const id = `task-${song}-${index}`;
+              wrapper.innerHTML = `
+                <input type="checkbox" id="${id}">
+                <label for="${id}">${task}</label>
+                <span class="celebrate">🎉</span>
+              `;
+              wrapper.querySelector("input").addEventListener
